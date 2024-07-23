@@ -43,6 +43,7 @@
     ]
   },
   "devDependencies": {
+    "@stylistic/eslint-plugin-js": "^2.3.0",
     "eslint": "^8.29.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.26.0",
