@@ -20,16 +20,18 @@ const upload = multer({ storage: storage });
 
 // GET /api/books
 router.get('/', auth, async (req, res) => {
-  console.log('GET /api/books - Récupération de tous les livres');
-  try {
-    const books = await Book.find();
-    console.log(`${books.length} livres trouvés`);
-    res.status(200).json(books);
-  } catch (error) {
-    console.error('Erreur lors de la récupération des livres:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
+    console.log('GET /api/books - Récupération de tous les livres');
+    try {
+      const sort = req.query.sort || 'createdAt'; // Tri par défaut sur la date de création
+      const order = req.query.order === 'asc' ? 1 : -1; // Ordre décroissant par défaut
+      const books = await Book.find().sort({ [sort]: order });
+      console.log(`${books.length} livres trouvés`);
+      res.status(200).json(books);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des livres:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
 
 // GET /api/books/bestrating
 router.get('/bestrating', async (req, res) => {
@@ -43,6 +45,19 @@ router.get('/bestrating', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// GET /api/books/home
+router.get('/home', async (req, res) => {
+    console.log('GET /api/books/home - Récupération des livres pour la page d\'accueil');
+    try {
+      const books = await Book.find().sort({ createdAt: -1 }).limit(12); // Récupère les 12 derniers livres ajoutés
+      console.log(`${books.length} livres trouvés pour la page d'accueil`);
+      res.status(200).json(books);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des livres pour la page d\'accueil:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
 
 // POST /api/books
 router.post('/', auth, upload.single('image'), async (req, res) => {

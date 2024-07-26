@@ -35,16 +35,18 @@ export async function getAuthenticatedUser() {
 }
 
 export async function getBooks() {
+  console.log('Attempting to fetch books from:', API_ROUTES.BOOKS);
   try {
     const response = await axios({
       method: 'GET',
       url: `${API_ROUTES.BOOKS}`,
     });
-    // eslint-disable-next-line array-callback-return
+    console.log('Received response:', response.data);
     const books = formatBooks(response.data);
+    console.log('Formatted books:', books);
     return books;
   } catch (err) {
-    console.error(err);
+    console.error('Error fetching books:', err.response ? err.response.data : err.message);
     return [];
   }
 }
