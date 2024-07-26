@@ -22,14 +22,7 @@ function SignIn({ setUser }) {
   const signIn = async () => {
     try {
       setIsLoading(true);
-      const response = await axios({
-        method: 'post',
-        url: API_ROUTES.SIGN_IN,
-        data: {
-          email,
-          password,
-        },
-      });
+      const response = await axios.post(API_ROUTES.SIGN_IN, { email, password });
       if (!response?.data?.token) {
         setNotification({ error: true, message: 'Une erreur est survenue' });
         console.log('Something went wrong during signing in: ', response);
@@ -41,7 +34,7 @@ function SignIn({ setUser }) {
     } catch (err) {
       console.log(err);
       setNotification({ error: true, message: err.message });
-      console.log('Some error occured during signing in: ', err);
+      console.log('Some error occurred during signing in: ', err);
     } finally {
       setIsLoading(false);
     }
@@ -50,14 +43,7 @@ function SignIn({ setUser }) {
   const signUp = async () => {
     try {
       setIsLoading(true);
-      const response = await axios({
-        method: 'POST',
-        url: API_ROUTES.SIGN_UP,
-        data: {
-          email,
-          password,
-        },
-      });
+      const response = await axios.post(API_ROUTES.SIGN_UP, { email, password });
       if (!response?.data) {
         console.log('Something went wrong during signing up: ', response);
         return;
@@ -65,11 +51,12 @@ function SignIn({ setUser }) {
       setNotification({ error: false, message: 'Votre compte a bien été créé, vous pouvez vous connecter' });
     } catch (err) {
       setNotification({ error: true, message: err.message });
-      console.log('Some error occured during signing up: ', err);
+      console.log('Some error occurred during signing up: ', err);
     } finally {
       setIsLoading(false);
     }
   };
+
   const errorClass = notification.error ? styles.Error : null;
   return (
     <div className={`${styles.SignIn} container`}>

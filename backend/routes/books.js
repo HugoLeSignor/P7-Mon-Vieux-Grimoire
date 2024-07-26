@@ -18,8 +18,21 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// GET /api/books
-router.get('/', auth, async (req, res) => {
+// Route publique pour la page d'accueil
+router.get('/home', async (req, res) => {
+  console.log('GET /api/home - Récupération de tous les livres pour la page d\'accueil');
+  try {
+    const books = await Book.find();
+    console.log(`${books.length} livres trouvés pour la page d'accueil`);
+    res.status(200).json(books);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des livres pour la page d\'accueil:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Route publique pour récupérer tous les livres
+router.get('/', async (req, res) => {
   console.log('GET /api/books - Récupération de tous les livres');
   try {
     const books = await Book.find();
@@ -31,7 +44,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// GET /api/books/bestrating
+// Route publique pour récupérer les meilleurs livres
 router.get('/bestrating', async (req, res) => {
   console.log('GET /api/books/bestrating - Récupération des meilleurs livres');
   try {
@@ -44,7 +57,7 @@ router.get('/bestrating', async (req, res) => {
   }
 });
 
-// POST /api/books
+// Route protégée pour ajouter un nouveau livre
 router.post('/', auth, upload.single('image'), async (req, res) => {
   console.log('POST /api/books - Ajout d\'un nouveau livre');
   console.log('Corps de la requête:', req.body);
@@ -77,7 +90,7 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
   }
 });
 
-// GET /api/books/:id
+// Route protégée pour récupérer un livre spécifique
 router.get('/:id', async (req, res) => {
   console.log(`GET /api/books/${req.params.id} - Récupération d'un livre spécifique`);
   try {
@@ -94,7 +107,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// PUT /api/books/:id
+// Route protégée pour mettre à jour un livre
 router.put('/:id', auth, upload.single('image'), async (req, res) => {
   console.log(`PUT /api/books/${req.params.id} - Mise à jour d'un livre`);
   console.log('Corps de la requête:', req.body);
@@ -139,7 +152,7 @@ router.put('/:id', auth, upload.single('image'), async (req, res) => {
   }
 });
 
-// DELETE /api/books/:id
+// Route protégée pour supprimer un livre
 router.delete('/:id', auth, async (req, res) => {
   console.log(`DELETE /api/books/${req.params.id} - Suppression d'un livre`);
   try {
@@ -169,7 +182,7 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
-// POST /api/books/:id/rating
+// Route protégée pour ajouter une note à un livre
 router.post('/:id/rating', auth, async (req, res) => {
   console.log(`POST /api/books/${req.params.id}/rating - Ajout d'une note à un livre`);
   console.log('Corps de la requête:', req.body);

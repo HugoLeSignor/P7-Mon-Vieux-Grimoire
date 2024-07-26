@@ -22,8 +22,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+    
 })
     .then(() => console.log('Connexion à MongoDB Atlas réussie !'))
     .catch((error) => console.log('Connexion à MongoDB Atlas échouée !', error));
@@ -41,6 +40,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/home', bookRoutes);
 
 // Gestion des erreurs globale
 app.use((error, req, res, next) => {
