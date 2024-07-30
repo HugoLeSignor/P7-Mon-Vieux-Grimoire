@@ -93,13 +93,26 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
 // Route protégée pour récupérer un livre spécifique
 router.get('/:id', async (req, res) => {
   console.log(`GET /api/books/${req.params.id} - Récupération d'un livre spécifique`);
+  console.log('ID reçu:', req.params.id);
+  console.log('GET /api/books/:id appelé avec ID:', req.params.id);
+  if (!req.params.id || req.params.id === 'undefined') {
+    return res.status(400).json({ message: 'ID de livre invalide' });
+  }
+  
   try {
+    if (!req.params.id || req.params.id === 'undefined') {
+      console.log('ID invalide détecté');
+      return res.status(400).json({ message: 'ID de livre invalide' });
+    }
+
     const book = await Book.findById(req.params.id);
+    console.log('Livre trouvé:', book);
+
     if (!book) {
       console.log('Livre non trouvé');
       return res.status(404).json({ message: 'Livre non trouvé' });
     }
-    console.log('Livre trouvé:', book);
+
     res.status(200).json(book);
   } catch (error) {
     console.error('Erreur lors de la récupération du livre:', error);

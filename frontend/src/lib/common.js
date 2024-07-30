@@ -1,13 +1,11 @@
 import axios from 'axios';
 import { API_ROUTES } from '../utils/constants';
 
-// Fonction pour formater les livres en changeant `_id` en `id`
 function formatBooks(bookArray) {
   return bookArray.map((book) => {
     const newBook = { ...book };
     // eslint-disable-next-line no-underscore-dangle
-    newBook.id = newBook._id; // Renommage de `_id` en `id`
-    delete newBook.id; // Supprimer `_id` pour éviter les erreurs
+    newBook.id = newBook._id;
     return newBook;
   });
 }
@@ -40,21 +38,26 @@ export async function getBooks() {
   try {
     const response = await axios({
       method: 'GET',
-      url: `${API_ROUTES.BOOKS}`, // URL de l'API
+      url: `${API_ROUTES.BOOKS}`,
     });
+    // eslint-disable-next-line array-callback-return
     const books = formatBooks(response.data);
     return books;
   } catch (err) {
-    console.error('Erreur lors de la récupération des livres:', err);
+    console.error(err);
     return [];
   }
 }
 
 export async function getBook(id) {
   try {
-    const response = await axios.get(`${API_ROUTES.BOOKS}/${id}`);
-    const { _id, ...book } = response.data; // Extrait `_id` et garde le reste de `book`
-    book.id = _id; // Renomme `_id` en `id`
+    const response = await axios({
+      method: 'GET',
+      url: `${API_ROUTES.BOOKS}/${id}`,
+    });
+    const book = response.data;
+    // eslint-disable-next-line no-underscore-dangle
+    book.id = book._id;
     return book;
   } catch (err) {
     console.error(err);
@@ -64,7 +67,10 @@ export async function getBook(id) {
 
 export async function getBestRatedBooks() {
   try {
-    const response = await axios.get(API_ROUTES.BEST_RATED);
+    const response = await axios({
+      method: 'GET',
+      url: `${API_ROUTES.BEST_RATED}`,
+    });
     return formatBooks(response.data);
   } catch (e) {
     console.error(e);
@@ -98,8 +104,9 @@ export async function rateBook(id, userId, rating) {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
-    const { _id, ...book } = response.data; // Extrait `_id` et garde le reste de `book`
-    book.id = _id; // Renomme `_id` en `id`
+    const book = response.data;
+    // eslint-disable-next-line no-underscore-dangle
+    book.id = book._id;
     return book;
   } catch (e) {
     console.error(e);
@@ -126,7 +133,10 @@ export async function addBook(data) {
   bodyFormData.append('image', data.file[0]);
 
   try {
-    return await axios.post(API_ROUTES.BOOKS, bodyFormData, {
+    return await axios({
+      method: 'post',
+      url: `${API_ROUTES.BOOKS}`,
+      data: bodyFormData,
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
@@ -139,6 +149,7 @@ export async function addBook(data) {
 
 export async function updateBook(data, id) {
   const userId = localStorage.getItem('userId');
+
   let newData;
   const book = {
     userId,
@@ -147,6 +158,7 @@ export async function updateBook(data, id) {
     year: data.year,
     genre: data.genre,
   };
+  console.log(data.file[0]);
   if (data.file[0]) {
     newData = new FormData();
     newData.append('book', JSON.stringify(book));
@@ -156,7 +168,10 @@ export async function updateBook(data, id) {
   }
 
   try {
-    const newBook = await axios.put(`${API_ROUTES.BOOKS}/${id}`, newData, {
+    const newBook = await axios({
+      method: 'put',
+      url: `${API_ROUTES.BOOKS}/${id}`,
+      data: newData,
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
